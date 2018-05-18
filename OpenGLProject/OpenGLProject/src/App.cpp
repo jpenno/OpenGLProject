@@ -99,24 +99,60 @@ void App::run(const char* title, int width, int height ){
 		float deltaTime = 0;
 		unsigned int frames = 0;
 		float fpsInterval = 0;
+	
 
 		float positions[] = {
-			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // 0
-			 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // 1
-			 0.5f,  0.5f, 0.0f, 1.0f, 1.0f, // 2
-			-0.5f,  0.5f, 0.0f, 0.0f, 1.0f  // 3
+			// front
+			-0.5f, -0.5f,  0.5f, 0.0, 0.0, // 0
+			 0.5f, -0.5f,  0.5f, 1.0, 0.0, // 1
+			 0.5f,  0.5f,  0.5f, 1.0, 1.0, // 2
+			-0.5f,  0.5f,  0.5f, 0.0, 1.0, // 3
+
+			// Right Face
+			 0.5f, -0.5f,  0.5f, 0.0, 0.0, // 4
+			 0.5f, -0.5f, -0.5f, 1.0, 0.0, // 5
+			 0.5f,  0.5f, -0.5f, 1.0, 1.0, // 6
+			 0.5f,  0.5f,  0.5f, 0.0, 1.0, // 7
+
+			 // Left Face
+			-0.5f, -0.5f,  0.5f, 0.0, 0.0, // 8
+			-0.5f, -0.5f, -0.5f, 1.0, 0.0, // 9
+			-0.5f,  0.5f, -0.5f, 1.0, 1.0, // 10
+			-0.5f,  0.5f,  0.5f, 0.0, 1.0, // 11
+
+			// Back face
+			 0.5f, -0.5f, -0.5f, 1.0, 0.0, // 12
+			-0.5f, -0.5f, -0.5f, 0.0, 0.0, // 13
+			-0.5f,  0.5f, -0.5f, 0.0, 1.0, // 14
+			 0.5f,  0.5f, -0.5f, 1.0, 1.0, // 15
+
+			// Top face
+			 0.5f, 0.5f,  0.5f, 1.0, 1.0,// 16
+			 0.5f, 0.5f, -0.5f, 1.0, 0.0,// 17
+			-0.5f, 0.5f, -0.5f, 0.0, 0.0,// 18
+			-0.5f, 0.5f,  0.5f, 0.0, 1.0,// 19
+
+			// Bottom face
+			 0.5f,  -0.5f,  0.5f, 1.0, 1.0,// 20
+			 0.5f,  -0.5f, -0.5f, 1.0, 0.0,// 21
+			-0.5f,  -0.5f, -0.5f, 0.0, 0.0,// 22
+			-0.5f,  -0.5f,  0.5f, 0.0, 1.0 // 23
 		};
 
 		unsigned int indices[] = {
-			0, 1, 2,
-			2, 3, 0
+				0, 1, 2,		0, 2, 3,	// front face
+				4, 5, 6,		4, 6, 7,	// Right face
+				10, 9, 8,		11, 10, 8,	// Left face 
+				12, 13, 14,		12, 14, 15,	// Back face
+				16, 17, 18,		16, 18, 19, // Top face
+				22, 21, 20,		22, 20, 23	// Bottom face
 		};
 		// scope to destory vertex array object before closing the openGL window
 		{
 			GLCall(glEnable(GL_BLEND));
 			GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 			VertexArray va;
-			VertexBuffer vb(positions, 4 * 5 * sizeof(float));
+			VertexBuffer vb(positions, 24 * 5 * sizeof(float));
 
 			Shader shader("data/shaders/Basic.shader");
 			shader.Bind();
@@ -130,7 +166,7 @@ void App::run(const char* title, int width, int height ){
 			layout.Push<float>(2);
 			va.AddBuffer(vb, layout);
 
-			IndexBuffer ib(indices, 6);
+			IndexBuffer ib(indices, 36);
 
 			Texture texture("data/textures/4-2-car-png-hd.png");
 			texture.Bind();

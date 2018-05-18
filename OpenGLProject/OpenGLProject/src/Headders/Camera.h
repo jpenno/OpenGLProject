@@ -11,8 +11,9 @@ public:
 	void update(float deltaTime);
 
 	void setProjectionView(float a_fov, float a_aspect, float a_near, float a_far);
-	void setPos(const glm::vec3& a_pos) { m_position = a_pos; }
+	inline void setPos(const glm::vec3& a_pos) { m_position = a_pos; }
 
+	inline glm::vec3 GetPos() const { return m_position; }
 	glm::mat4 GetProjectionView();
 
 	void Lookat(glm::vec3 a_target);
