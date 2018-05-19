@@ -15,11 +15,15 @@
 #include "Shader.h"
 #include "Texture.h"
 
+
 #include "Cube.h"
 
 #include "Input.h"
 
 #include "VertexArray.h"
+// tmp
+#include "stb_image/stb_image.h"
+
 
 using glm::vec3;
 using glm::vec4;
@@ -68,7 +72,13 @@ bool App::createWindow(const char * title, int width, int height) {
 
 	// setting clear color
 	glClearColor(0.25f, 0.25f, 0.25f, 1);
+
 	glEnable(GL_DEPTH_TEST);
+
+	// enable back face culling
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+
 
 	// getting the version of openGL
 	auto major = ogl_GetMajorVersion();
@@ -106,7 +116,104 @@ void App::run(const char* title, int width, int height ){
 			GLCall(glEnable(GL_BLEND));
 			GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
-			Cube Testcube (glm::vec4(1.0f, 1.0f, 0.0f, 1.0f), 1.0f);
+			float skyboxVertices[] = {
+				// Positions
+				-1.0f,  1.0f, -1.0f,
+				-1.0f, -1.0f, -1.0f,
+				1.0f, -1.0f, -1.0f,
+				1.0f, -1.0f, -1.0f,
+				1.0f,  1.0f, -1.0f,
+				-1.0f,  1.0f, -1.0f,
+
+				-1.0f, -1.0f,  1.0f,
+				-1.0f, -1.0f, -1.0f,
+				-1.0f,  1.0f, -1.0f,
+				-1.0f,  1.0f, -1.0f,
+				-1.0f,  1.0f,  1.0f,
+				-1.0f, -1.0f,  1.0f,
+
+				1.0f, -1.0f, -1.0f,
+				1.0f, -1.0f,  1.0f,
+				1.0f,  1.0f,  1.0f,
+				1.0f,  1.0f,  1.0f,
+				1.0f,  1.0f, -1.0f,
+				1.0f, -1.0f, -1.0f,
+
+				-1.0f, -1.0f,  1.0f,
+				-1.0f,  1.0f,  1.0f,
+				1.0f,  1.0f,  1.0f,
+				1.0f,  1.0f,  1.0f,
+				1.0f, -1.0f,  1.0f,
+				-1.0f, -1.0f,  1.0f,
+
+				-1.0f,  1.0f, -1.0f,
+				1.0f,  1.0f, -1.0f,
+				1.0f,  1.0f,  1.0f,
+				1.0f,  1.0f,  1.0f,
+				-1.0f,  1.0f,  1.0f,
+				-1.0f,  1.0f, -1.0f,
+
+				-1.0f, -1.0f, -1.0f,
+				-1.0f, -1.0f,  1.0f,
+				1.0f, -1.0f, -1.0f,
+				1.0f, -1.0f, -1.0f,
+				-1.0f, -1.0f,  1.0f,
+				1.0f, -1.0f,  1.0f
+			};
+
+			Shader skyBoxShader("data/shaders/skyBox.shader");
+			skyBoxShader.Bind();
+
+			VertexArray skyVa;
+			VertexBuffer skyVb(skyboxVertices, sizeof(skyboxVertices));
+
+			VertexBufferLayout skyVaLayout;
+			skyVaLayout.Push<float>(3);
+			skyVa.AddBuffer(skyVb, skyVaLayout);
+
+			int width, height, BP;
+
+
+			std::vector<const char*> fielPaths;
+			fielPaths.push_back("data/Textures/lilacisles_ft.png");	
+			fielPaths.push_back("data/Textures/lilacisles_bk.png");	
+			fielPaths.push_back("data/Textures/lilacisles_up.png");	
+			fielPaths.push_back("data/Textures/lilacisles_dn.png"); 
+			fielPaths.push_back("data/Textures/lilacisles_rt.png"); 
+			fielPaths.push_back("data/Textures/lilacisles_lf.png");	
+
+
+			unsigned int CubeMagTexture;
+			GLCall(glGenTextures(1, &CubeMagTexture));
+
+			GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, CubeMagTexture));
+
+
+			for (int i = 0; i < fielPaths.size(); i++) {
+
+				//stbi_set_flip_vertically_on_load(1);
+				unsigned char* localBuffer = stbi_load(fielPaths[i], &width, &height, &BP, 4);
+
+				GLCall(glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA8,
+									width, height,	0, GL_RGBA, GL_UNSIGNED_BYTE, localBuffer));
+
+				//GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, 0));
+
+				if (localBuffer)
+					stbi_image_free(localBuffer);
+			}
+
+			GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+			GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+			GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+			GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+			GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE));
+			GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, 0));
+
+
+			glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)1280 / (float)720, 0.1f, 1000.0f);
+
+			Cube Testcube(glm::vec4(1.0f, 1.0f, 0.0f, 1.0f), 1.0f);
 			Cube Testcube2(glm::vec4(1.0f, 2.0f, 0.0f, 1.0f), 1.0f);
 			Cube Testcube4(glm::vec4(1.0f, 3.0f, 0.0f, 1.0f), 1.0f);
 
@@ -132,6 +239,22 @@ void App::run(const char* title, int width, int height ){
 				Testcube.Draw(m_camera.GetProjectionView());
 				Testcube2.Draw(m_camera.GetProjectionView());
 				Testcube4.Draw(m_camera.GetProjectionView());
+
+				GLCall(glDepthFunc(GL_LEQUAL));
+				skyBoxShader.Bind();
+				glm::mat3 viweMat = glm::mat3(m_camera.GetViewMat());
+				skyBoxShader.SetuniformMat4f("view", viweMat);
+				skyBoxShader.SetuniformMat4f("projection", projection);
+				skyVa.Bind();
+
+				glBindTexture(GL_TEXTURE_CUBE_MAP, CubeMagTexture);
+
+				GLCall(glDrawArrays(GL_TRIANGLES, 0, 36));
+				glBindVertexArray(0);
+
+				glDepthFunc( GL_LESS ); 
+
+
 				draw();
 
 				if (glfwWindowShouldClose(window) == GLFW_TRUE)
@@ -185,5 +308,6 @@ void App::shutdown() {
 
 void App::clearScreen() {
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+
 }
 

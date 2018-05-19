@@ -12,7 +12,7 @@
 
 Cube::Cube(glm::vec3 a_pos, float scale)
 {
-	m_verts = new float[6*4*5] {
+	m_verts = new float [6 * 4 * 5] {
 		// front
 		a_pos.x + -0.5f, a_pos.y + -0.5f, a_pos.z + 0.5f, 0.0, 0.0, // 0
 		a_pos.x + 0.5f, a_pos.y + -0.5f,  a_pos.z + 0.5f, 1.0, 0.0, // 1
@@ -50,6 +50,7 @@ Cube::Cube(glm::vec3 a_pos, float scale)
 		a_pos.x + -0.5f,  a_pos.y + -0.5f,a_pos.z + 0.5f, 0.0, 1.0  // 23
 	};
 
+
 	m_indices = new unsigned int[36] {
 		0, 1, 2,		0, 2, 3,	// front face
 		4, 5, 6,		4, 6, 7,	// Right face
@@ -75,11 +76,9 @@ Cube::Cube(glm::vec3 a_pos, float scale)
 
 	m_ib = new IndexBuffer(m_indices, 36);
 
-	m_texture = new Texture("data/textures/4-2-car-png-hd.png");
+	m_texture = new Texture("data/Textures/4-2-car-png-hd.png");
 	m_texture->Bind();
 	m_shader->SetUniform1i("u_Texture", 0);
-	Texture texture("data/textures/4-2-car-png-hd.png");
-	texture.Bind();
 }
 
 Cube::~Cube()

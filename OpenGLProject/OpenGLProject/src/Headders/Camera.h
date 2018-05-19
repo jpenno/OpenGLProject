@@ -1,6 +1,7 @@
 #pragma once
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
+#include <glm/ext.hpp>
 
 class Camera
 {
@@ -15,6 +16,9 @@ public:
 
 	inline glm::vec3 GetPos() const { return m_position; }
 	glm::mat4 GetProjectionView();
+	inline glm::mat4 GetViewMat()const {return glm::lookAt(this->m_position, this->m_position + this->m_cameraFront, this->m_cameraUp);
+	}
+
 
 	void Lookat(glm::vec3 a_target);
 
