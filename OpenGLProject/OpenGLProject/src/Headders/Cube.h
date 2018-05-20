@@ -1,6 +1,5 @@
 #pragma once
 #include "glm/glm.hpp"
-#include "Renderer.h"
 
 class VertexArray;
 class VertexBuffer;
@@ -9,8 +8,6 @@ class IndexBuffer;
 class Shader;
 class Texture;
 
-
-
 class Cube
 {
 private:
@@ -18,8 +15,8 @@ private:
 
 	float* m_verts = nullptr;
 	unsigned int* m_indices = nullptr;
-
-	Renderer m_renderer;
+	 
+	//Renderer m_renderer;
 
 	// OpenGl data
 	VertexArray*            m_va = nullptr;
@@ -32,6 +29,7 @@ private:
 public:
 	Cube(glm::vec3 a_pos, float scale);
 	~Cube();
+
 
 
 	void Draw(glm::mat4 projMat);

@@ -9,6 +9,8 @@
 #include "Shader.h"
 #include "Texture.h"
 
+#include "Renderer.h"
+
 
 Cube::Cube(glm::vec3 a_pos, float scale)
 {
@@ -76,9 +78,8 @@ Cube::Cube(glm::vec3 a_pos, float scale)
 
 	m_ib = new IndexBuffer(m_indices, 36);
 
-	m_texture = new Texture("data/Textures/4-2-car-png-hd.png");
-	m_texture->Bind();
-	m_shader->SetUniform1i("u_Texture", 0);
+	m_texture = new Texture();
+	m_texture->LoadTexture2D("data/Textures/4-2-car-png-hd.png");
 }
 
 Cube::~Cube()
@@ -111,9 +112,8 @@ Cube::~Cube()
 void Cube::Draw(glm::mat4 projMat)
 {
 	m_va->Bind();
-	m_vb->Bind();
 	m_shader->Bind();
 	m_texture->Bind();
 	m_shader->SetuniformMat4f("u_MVP", projMat);
-	m_renderer.Draw(*m_va, *m_ib, *m_shader);
+	GLCall(glDrawElements(GL_TRIANGLES, m_ib->GetCount(), GL_UNSIGNED_INT, nullptr));
 }

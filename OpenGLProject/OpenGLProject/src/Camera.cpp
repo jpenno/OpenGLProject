@@ -40,7 +40,6 @@ void Camera::update(float deltaTime) {
 	if (input->isKeyDown(INPUT_KEY_Q)) {
 		m_position.y -= speed * deltaTime;
 	}
-
 	
 	if (input->isMouseButtonDown(INPUT_MOUSE_BUTTON_RIGHT)) {
 		int mouseXPos, mouseYPos;
@@ -61,6 +60,8 @@ void Camera::update(float deltaTime) {
 	m_viewMatrix = glm::lookAt(m_position, m_position + m_cameraFront, m_cameraUp);
 
 	input->getMouseXY(&m_lastMouseXPos, &m_lastMouseYPos);
+
+
 }
 
 void Camera::setProjectionView(float a_fov, float a_aspect, float a_near, float a_far)

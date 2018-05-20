@@ -146,6 +146,7 @@
     <ClInclude Include="src\Headders\Input.h" />
     <ClInclude Include="src\Headders\Renderer.h" />
     <ClInclude Include="src\Headders\Shader.h" />
+    <ClInclude Include="src\Headders\SkyBox.h" />
     <ClInclude Include="src\Headders\Texture.h" />
     <ClInclude Include="src\Headders\VertexArray.h" />
     <ClInclude Include="src\Headders\VertexBuffer.h" />
@@ -307,6 +308,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Renderer.cpp" />
     <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\SkyBox.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\Vendor\glm\detail\glm.cpp" />
     <ClCompile Include="src\Vendor\gl_core_4_4\gl_core_4_4.c" />

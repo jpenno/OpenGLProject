@@ -1,17 +1,30 @@
 #pragma once
 #include <string>
+#include <vector>
+
+
 
 class Texture
 {
 private:
+	static enum class Type {
+		TEXTURE2D, TEXUTRE_CUBEMAP
+	};
+
+	Type m_textureType;
+
 	unsigned int m_rendererID;
 	std::string m_filePath;
 	unsigned char* m_localBuffer;
 	int m_width, m_height, m_BP;
 
+
 public:
-	Texture(const std::string& filePath);
+	Texture();
 	~Texture();
+
+	void LoadTexture2D(const std::string& filePath);
+	void LoadTextureCubeMap(const std::vector<std::string>& fielPaths);
 
 	void Bind(unsigned int slot = 0) const;
 	void Unbind() const;
