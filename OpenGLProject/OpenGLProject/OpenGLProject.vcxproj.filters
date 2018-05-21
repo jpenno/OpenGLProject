@@ -877,7 +877,7 @@
     <None Include="src\Vendor\glm\gtx\wrap.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="data\Shaders\Basic.shader" />
+    <None Include="data\Shaders\CubeMap.shader" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="data\Textures\4-2-car-png-hd.png">

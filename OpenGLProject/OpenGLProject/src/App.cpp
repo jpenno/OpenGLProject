@@ -22,8 +22,6 @@
 #include "Input.h"
 
 #include "VertexArray.h"
-// tmp
-#include "stb_image/stb_image.h"
 
 
 using glm::vec3;
@@ -102,11 +100,13 @@ bool App::Startup() {
 	return true;
 }
 
-void App::run(const char* title, int width, int height ){
+void App::run(const char* title, int width, int height )
+{
 	if (createWindow(title,  width,  height) &&
-		Startup()) {
+		Startup()) 
+	{
 		// variables for timing
-		float prevTime = glfwGetTime();
+		float prevTime = (float)glfwGetTime();
 		float currTime = 0;
 		float deltaTime = 0;
 		unsigned int frames = 0;
@@ -118,25 +118,23 @@ void App::run(const char* title, int width, int height ){
 			GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
 			std::vector<std::string> fielPaths;
-			fielPaths.emplace_back("data/Textures/lilacisles_ft.png");	
+			fielPaths.emplace_back("data/Textures/lilacisles_ft.png");
 			fielPaths.emplace_back("data/Textures/lilacisles_bk.png");
 			fielPaths.emplace_back("data/Textures/lilacisles_up.png");
 			fielPaths.emplace_back("data/Textures/lilacisles_dn.png");
 			fielPaths.emplace_back("data/Textures/lilacisles_rt.png");
 			fielPaths.emplace_back("data/Textures/lilacisles_lf.png");
 
-			SkyBox skyBox(fielPaths, glm::radians(45.0f), 1280, 720, m_camera.GetViewMat());
+			//SkyBox skyBox(fielPaths, m_camera.GetProjectionView(), m_camera.GetViewMat());
 
+			Cube Testcube(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 2.0f, fielPaths);
+			Cube Testcube2(glm::vec4(2.0f, 0.0f, 0.0f, 1.0f), 1.0f, fielPaths);
+			Cube Testcube4(glm::vec4(4.0f, 0.0f, 0.0f, 1.0f), 2.0f, fielPaths);
 
-			Cube Testcube(glm::vec4(1.0f, 1.0f, 0.0f, 1.0f), 1.0f);
-			Cube Testcube2(glm::vec4(1.0f, 2.0f, 0.0f, 1.0f), 1.0f);
-			Cube Testcube4(glm::vec4(1.0f, 3.0f, 0.0f, 1.0f), 1.0f);
-
-			Renderer randerer;
-
-			while (!m_gameOver) {
+			while (!m_gameOver) 
+			{
 				// update delta time
-				currTime = glfwGetTime();
+				currTime = (float)glfwGetTime();
 				deltaTime = currTime - prevTime;
 				prevTime = currTime;
 
@@ -154,8 +152,8 @@ void App::run(const char* title, int width, int height ){
 				Testcube.Draw(m_camera.GetProjectionView());
 				Testcube2.Draw(m_camera.GetProjectionView());
 				Testcube4.Draw(m_camera.GetProjectionView());
-			
-				skyBox.Draw(m_camera.GetViewMat());
+
+				//skyBox.Draw(m_camera.GetViewMat());
 
 				draw();
 
@@ -167,7 +165,8 @@ void App::run(const char* title, int width, int height ){
 	}
 }
 
-void App::update(float deltaTime) {
+void App::update(float deltaTime) 
+{
 	Input* input = Input::getInstance();
 	if (input->isKeyDown(INPUT_KEY_ESCAPE))
 		quit();
@@ -175,15 +174,16 @@ void App::update(float deltaTime) {
 	m_camera.update(deltaTime);
 }
 
-void App::draw() {
-
+void App::draw() 
+{
 	Gizmos::clear();
 	Gizmos::addTransform(glm::mat4(1));
 
 	vec4 white(1);
 	vec4 black(0, 0, 0, 1);
 
-	for (int i = 0; i < 21; ++i) {
+	for (int i = 0; i < 21; ++i) 
+	{
 		Gizmos::addLine(vec3(-10 + i, 0, 10),
 			vec3(-10 + i, 0, -10),
 			i == 10 ? white : black);
@@ -193,13 +193,12 @@ void App::draw() {
 			i == 10 ? white : black);
 	}
 
-	//Gizmos::addSphere(vec3(0, 0, 0), 1.0f, 12, 12, vec4(1.0f, 1.0f, 0.0f, 1.0f));
-
 	Gizmos::draw(m_camera.GetProjectionView());
 	glfwSwapBuffers(window);
 }
 
-void App::shutdown() {
+void App::shutdown() 
+{
 	Gizmos::destroy();
 
 	glfwDestroyWindow(window);
@@ -208,7 +207,8 @@ void App::shutdown() {
 	Input::destory();
 }
 
-void App::clearScreen() {
+void App::clearScreen() 
+{
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 }

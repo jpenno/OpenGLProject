@@ -7,7 +7,7 @@
 class Texture
 {
 private:
-	static enum class Type {
+	enum class Type {
 		TEXTURE2D, TEXUTRE_CUBEMAP
 	};
 

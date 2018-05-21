@@ -12,48 +12,57 @@
 #include "Renderer.h"
 
 
-Cube::Cube(glm::vec3 a_pos, float scale)
+Cube::Cube(glm::vec3 a_pos, float scale, std::vector<std::string> fielPaths)
 {
-	m_verts = new float [6 * 4 * 5] {
+	// set the position of the cube
+	m_matPos[3][0] = a_pos.x;
+	m_matPos[3][1] = a_pos.y;
+	m_matPos[3][2] = a_pos.z;
+
+	// set the scale of the cube
+	m_matPos[0][0] = scale;
+	m_matPos[1][1] = scale;
+	m_matPos[2][2] = scale;
+
+	 float verts [] {
 		// front
-		a_pos.x + -0.5f, a_pos.y + -0.5f, a_pos.z + 0.5f, 0.0, 0.0, // 0
-		a_pos.x + 0.5f, a_pos.y + -0.5f,  a_pos.z + 0.5f, 1.0, 0.0, // 1
-		a_pos.x + 0.5f, a_pos.y + 0.5f,   a_pos.z + 0.5f, 1.0, 1.0, // 2
-		a_pos.x + -0.5f, a_pos.y + 0.5f,  a_pos.z + 0.5f, 0.0, 1.0, // 3
+		-0.5f, -0.5f,  0.5f, // 0
+		 0.5f, -0.5f,  0.5f, // 1
+		 0.5f,  0.5f,  0.5f, // 2
+	    -0.5f,  0.5f,  0.5f, // 3
 
 		// Right Face
-		a_pos.x + 0.5f,  a_pos.y + -0.5f, a_pos.z + 0.5f, 0.0, 0.0, // 4
-		a_pos.x + 0.5f,  a_pos.y + -0.5f, a_pos.z + -0.5f, 1.0, 0.0, // 5
-		a_pos.x + 0.5f,  a_pos.y + 0.5f,  a_pos.z + -0.5f, 1.0, 1.0, // 6
-		a_pos.x + 0.5f,  a_pos.y + 0.5f,  a_pos.z + 0.5f, 0.0, 1.0, // 7
+		 0.5f, -0.5f,  0.5f, // 4
+		 0.5f, -0.5f, -0.5f, // 5
+		 0.5f,  0.5f, -0.5f, // 6
+		 0.5f,  0.5f,  0.5f, // 7
 
 		// Left Face
-		a_pos.x + -0.5f, a_pos.y + -0.5f,a_pos.z + 0.5f, 0.0, 0.0, // 8
-		a_pos.x + -0.5f, a_pos.y + -0.5f,a_pos.z + -0.5f, 1.0, 0.0, // 9
-		a_pos.x + -0.5f, a_pos.y + 0.5f, a_pos.z + -0.5f, 1.0, 1.0, // 10
-		a_pos.x + -0.5f, a_pos.y + 0.5f, a_pos.z + 0.5f, 0.0, 1.0, // 11
+		-0.5f, -0.5f,  0.5f, // 8
+		-0.5f, -0.5f, -0.5f, // 9
+		-0.5f,  0.5f, -0.5f, // 10
+		-0.5f,  0.5f,  0.5f, // 11
 
 		// Back face
-		a_pos.x + 0.5f,   a_pos.y + -0.5f,a_pos.z + -0.5f, 1.0, 0.0, // 12
-		a_pos.x + -0.5f,  a_pos.y + -0.5f,a_pos.z + -0.5f, 0.0, 0.0, // 13
-		a_pos.x + -0.5f,  a_pos.y + 0.5f, a_pos.z + -0.5f, 0.0, 1.0, // 14
-		a_pos.x + 0.5f,   a_pos.y + 0.5f, a_pos.z + -0.5f, 1.0, 1.0, // 15
+	 	 0.5f, -0.5f, -0.5f, // 12
+		-0.5f, -0.5f, -0.5f, // 13
+		-0.5f,  0.5f, -0.5f, // 14
+		 0.5f,  0.5f, -0.5f, // 15
 
-		// Top face					   
-		a_pos.x + 0.5f,  a_pos.y + 0.5f,a_pos.z + 0.5f, 1.0, 1.0, // 16
-		a_pos.x + 0.5f,  a_pos.y + 0.5f,a_pos.z + -0.5f, 1.0, 0.0, // 17
-		a_pos.x + -0.5f, a_pos.y + 0.5f,a_pos.z + -0.5f, 0.0, 0.0, // 18
-		a_pos.x + -0.5f, a_pos.y + 0.5f,a_pos.z + 0.5f, 0.0, 1.0, // 19
+		// Top face
+		 0.5f,  0.5f,  0.5f, // 16
+		 0.5f,  0.5f, -0.5f, // 17
+		-0.5f,  0.5f, -0.5f, // 18
+		-0.5f,  0.5f,  0.5f, // 19
 
 		// Bottom face
-		a_pos.x + 0.5f,   a_pos.y + -0.5f,a_pos.z + 0.5f, 1.0, 1.0, // 20
-		a_pos.x + 0.5f,   a_pos.y + -0.5f,a_pos.z + -0.5f, 1.0, 0.0, // 21
-		a_pos.x + -0.5f,  a_pos.y + -0.5f,a_pos.z + -0.5f, 0.0, 0.0, // 22
-		a_pos.x + -0.5f,  a_pos.y + -0.5f,a_pos.z + 0.5f, 0.0, 1.0  // 23
+	     0.5f, -0.5f,  0.5f, // 20
+	     0.5f, -0.5f, -0.5f, // 21
+	    -0.5f, -0.5f, -0.5f, // 22
+	    -0.5f, -0.5f,  0.5f  // 23
 	};
 
-
-	m_indices = new unsigned int[36] {
+	 unsigned char indiceTesting[36]{
 		0, 1, 2,		0, 2, 3,	// front face
 		4, 5, 6,		4, 6, 7,	// Right face
 		10, 9, 8,		11, 10, 8,	// Left face 
@@ -63,33 +72,24 @@ Cube::Cube(glm::vec3 a_pos, float scale)
 	};
 
 	m_va = new VertexArray();
+	m_vb = new VertexBuffer(verts,  sizeof(verts));
 
-	m_vb = new VertexBuffer(m_verts, 6 * 4 * 5 * sizeof(float));
-
-	m_shader = new Shader("data/shaders/Basic.shader");
+	m_shader = new Shader("data/shaders/CubeMap.shader");
 	m_shader->Bind();
-
-	glm::mat4 orthoProj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
 
 	m_layout = new VertexBufferLayout();
 	m_layout->Push<float>(3);
-	m_layout->Push<float>(2);
+	//m_layout->Push<float>(2);
 	m_va->AddBuffer(*m_vb, *m_layout);
 
-	m_ib = new IndexBuffer(m_indices, 36);
+	m_ib = new IndexBuffer(indiceTesting, 36);
 
 	m_texture = new Texture();
-	m_texture->LoadTexture2D("data/Textures/4-2-car-png-hd.png");
+	m_texture->LoadTextureCubeMap(fielPaths);
 }
 
 Cube::~Cube()
 {
-	if (m_verts != nullptr)
-		delete m_verts;
-
-	if (m_indices != nullptr)
-		delete m_indices;
-
 	if (m_va != nullptr)
 		delete m_va;
 
@@ -114,6 +114,8 @@ void Cube::Draw(glm::mat4 projMat)
 	m_va->Bind();
 	m_shader->Bind();
 	m_texture->Bind();
-	m_shader->SetuniformMat4f("u_MVP", projMat);
-	GLCall(glDrawElements(GL_TRIANGLES, m_ib->GetCount(), GL_UNSIGNED_INT, nullptr));
+	glm::mat4 pos = projMat * m_matPos;
+	m_shader->SetuniformMat4f("u_Pos", pos);
+
+	GLCall(glDrawElements(GL_TRIANGLES, m_ib->GetCount(), GL_UNSIGNED_BYTE, nullptr));
 }

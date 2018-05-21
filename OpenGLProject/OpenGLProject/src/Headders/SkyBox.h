@@ -24,8 +24,8 @@ private:
 
 
 public:
-	SkyBox(std::vector<std::string>& filePaths, float fov, float screenWidth, float screenHeight, 
-		glm::mat4 m_viweMat, float nearPlane = 0.1f, float farPlane = 1000.0f);
+	SkyBox(std::vector<std::string>& filePaths, glm::mat4 a_projection, glm::mat4 m_viweMat, 
+				float nearPlane = 0.1f, float farPlane = 1000.0f);
 
 	~SkyBox();
 

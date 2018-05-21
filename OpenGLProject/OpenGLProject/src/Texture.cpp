@@ -76,7 +76,6 @@ void Texture::Bind(unsigned int slot /*= 0*/) const
 		GLCall(glBindTexture(GL_TEXTURE_2D, m_rendererID));
 		break;
 	case Texture::Type::TEXUTRE_CUBEMAP:
-		std::cout << "TEXUTRE_CUBEMAP" << std::endl;
 		glBindTexture(GL_TEXTURE_CUBE_MAP, m_rendererID);
 		break;
 	default:

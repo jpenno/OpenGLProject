@@ -11,8 +11,8 @@
 
 #include "Renderer.h"
 
-SkyBox::SkyBox(std::vector<std::string>& filePaths, float fov, float screenWidth, float screenHeight,
-				 glm::mat4 viweMat, float nearPlane /*= 0.1f*/, float farPlane /*= 1000.0f*/)
+SkyBox::SkyBox(std::vector<std::string>& filePaths, glm::mat4 a_projection, glm::mat4 viweMat,
+				float nearPlane /*= 0.1f*/, float farPlane /*= 1000.0f*/)
 {
 	float skyboxVertices[] = {
 		// Positions
@@ -60,7 +60,7 @@ SkyBox::SkyBox(std::vector<std::string>& filePaths, float fov, float screenWidth
 	};
 
 	m_viweMat = viweMat;
-	m_projection = glm::perspective(fov, (float)screenWidth / (float)screenHeight, nearPlane, farPlane);
+	m_projection = a_projection;
 
 	m_va = new VertexArray();
 
