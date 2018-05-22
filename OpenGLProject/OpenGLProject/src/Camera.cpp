@@ -60,8 +60,6 @@ void Camera::update(float deltaTime) {
 	m_viewMatrix = glm::lookAt(m_position, m_position + m_cameraFront, m_cameraUp);
 
 	input->getMouseXY(&m_lastMouseXPos, &m_lastMouseYPos);
-
-
 }
 
 void Camera::setProjectionView(float a_fov, float a_aspect, float a_near, float a_far)
@@ -69,7 +67,7 @@ void Camera::setProjectionView(float a_fov, float a_aspect, float a_near, float 
 	m_projectionMatrix = glm::perspective(a_fov, a_aspect, a_near, a_far);
 }
 
-glm::mat4 Camera::GetProjectionView()
+const glm::mat4 Camera::GetProjectionView()
 {
 	return m_projectionMatrix * m_viewMatrix;
 }

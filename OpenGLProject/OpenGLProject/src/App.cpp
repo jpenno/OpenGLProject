@@ -15,7 +15,6 @@
 #include "Shader.h"
 #include "Texture.h"
 
-
 #include "Cube.h"
 #include "SkyBox.h"
 
@@ -78,7 +77,6 @@ bool App::createWindow(const char * title, int width, int height) {
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
-
 	// getting the version of openGL
 	auto major = ogl_GetMajorVersion();
 	auto minor = ogl_GetMinorVersion();
@@ -127,9 +125,9 @@ void App::run(const char* title, int width, int height )
 
 			//SkyBox skyBox(fielPaths, m_camera.GetProjectionView(), m_camera.GetViewMat());
 
-			Cube Testcube(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 2.0f, fielPaths);
-			Cube Testcube2(glm::vec4(2.0f, 0.0f, 0.0f, 1.0f), 1.0f, fielPaths);
-			Cube Testcube4(glm::vec4(4.0f, 0.0f, 0.0f, 1.0f), 2.0f, fielPaths);
+			Cube Testcube (fielPaths, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+			Cube Testcube2(fielPaths, glm::vec4(2.0f, 0.0f, 0.0f, 1.0f));
+			Cube Testcube4(fielPaths, glm::vec4(4.0f, 0.0f, 0.0f, 1.0f));
 
 			while (!m_gameOver) 
 			{
@@ -210,6 +208,5 @@ void App::shutdown()
 void App::clearScreen() 
 {
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-
 }
 

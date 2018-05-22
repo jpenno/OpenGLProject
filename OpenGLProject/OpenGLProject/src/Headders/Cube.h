@@ -27,10 +27,10 @@ private:
 	Texture*           m_texture = nullptr;
 
 public:
-	Cube(glm::vec3 a_pos, float scale, std::vector<std::string> fielPaths);
+	Cube(std::vector<std::string>& fielPaths, glm::vec3 a_pos, float scale = 1 );
 	~Cube();
 
 
-	void Draw(glm::mat4 projMat);
+	void Draw(const glm::mat4& projMat);
 
 };

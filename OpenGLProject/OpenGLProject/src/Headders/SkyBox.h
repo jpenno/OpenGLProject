@@ -18,14 +18,15 @@ private:
 	// OpenGl data
 	VertexArray *           m_va = nullptr;
 	VertexBuffer*           m_vb = nullptr;
+	IndexBuffer*            m_ib = nullptr;
 	Shader*             m_shader = nullptr;
 	VertexBufferLayout* m_layout = nullptr;
 	Texture*           m_texture = nullptr;
 
 
 public:
-	SkyBox(std::vector<std::string>& filePaths, glm::mat4 a_projection, glm::mat4 m_viweMat, 
-				float nearPlane = 0.1f, float farPlane = 1000.0f);
+	SkyBox(const std::vector<std::string>& filePaths, const glm::mat4& a_projection, const glm::mat4& a_viweMat,
+		 float nearPlane = 0.1f,  float farPlane = 1000.0f);
 
 	~SkyBox();
 
