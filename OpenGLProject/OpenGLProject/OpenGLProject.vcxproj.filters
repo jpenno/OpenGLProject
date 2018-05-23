@@ -492,6 +492,12 @@
     <ClInclude Include="src\Headders\SkyBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Vendor\OBJMesh\OBJMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Vendor\OBJMesh\tiny_obj_loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Vendor\gl_core_4_4\gl_core_4_4.c">
@@ -540,6 +546,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\SkyBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Vendor\OBJMesh\OBJMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -17,6 +17,7 @@
 
 #include "Cube.h"
 #include "SkyBox.h"
+#include "OBJMesh\OBJMesh.h"
 
 #include "Input.h"
 
@@ -115,6 +116,22 @@ void App::run(const char* title, int width, int height )
 			GLCall(glEnable(GL_BLEND));
 			GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
+			Shader objShader("data/shaders/objShader.shader");
+
+			aie::OBJMesh mesh;
+			mesh.load("data/soulspear/soulspear.obj", true, true);
+
+			glm::mat4 m_bunnyTransform;
+			m_bunnyTransform = {
+				0.5f,0,0,0,
+				0,0.5f,0,0,
+				0,0,0.5f,0,
+				0,0,0,1
+			};
+
+			//Mesh mesh(glm::vec3(0.0f, 0.0f, 0.0f), m_camera.GetProjectionView());
+
+
 			std::vector<std::string> fielPaths;
 			fielPaths.emplace_back("data/Textures/lilacisles_ft.png");
 			fielPaths.emplace_back("data/Textures/lilacisles_bk.png");
@@ -125,9 +142,9 @@ void App::run(const char* title, int width, int height )
 
 			//SkyBox skyBox(fielPaths, m_camera.GetProjectionView(), m_camera.GetViewMat());
 
-			Cube Testcube (fielPaths, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-			Cube Testcube2(fielPaths, glm::vec4(2.0f, 0.0f, 0.0f, 1.0f));
-			Cube Testcube4(fielPaths, glm::vec4(4.0f, 0.0f, 0.0f, 1.0f));
+			Cube Testcube (fielPaths, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), m_camera.GetProjectionView());
+			Cube Testcube2(fielPaths, glm::vec4(2.0f, 0.0f, 0.0f, 1.0f), m_camera.GetProjectionView(), 2);
+			Cube Testcube4(fielPaths, glm::vec4(6.0f, 0.0f, 0.0f, 1.0f), m_camera.GetProjectionView(), 4);
 
 			while (!m_gameOver) 
 			{
@@ -150,6 +167,13 @@ void App::run(const char* title, int width, int height )
 				Testcube.Draw(m_camera.GetProjectionView());
 				Testcube2.Draw(m_camera.GetProjectionView());
 				Testcube4.Draw(m_camera.GetProjectionView());
+
+				// draw obj
+				objShader.Bind();
+				// bind transform
+				auto pvm = m_camera.GetProjectionView() * m_bunnyTransform;
+				objShader.SetuniformMat4f("ProjectionViewModel", pvm);
+				mesh.draw();
 
 				//skyBox.Draw(m_camera.GetViewMat());
 

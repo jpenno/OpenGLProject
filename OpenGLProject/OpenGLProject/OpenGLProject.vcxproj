@@ -296,6 +296,8 @@
     <ClInclude Include="src\Vendor\glm\vec4.hpp" />
     <ClInclude Include="src\Vendor\glm\vector_relational.hpp" />
     <ClInclude Include="src\Vendor\gl_core_4_4\gl_core_4_4.h" />
+    <ClInclude Include="src\Vendor\OBJMesh\OBJMesh.h" />
+    <ClInclude Include="src\Vendor\OBJMesh\tiny_obj_loader.h" />
     <ClInclude Include="src\Vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
@@ -312,6 +314,7 @@
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\Vendor\glm\detail\glm.cpp" />
     <ClCompile Include="src\Vendor\gl_core_4_4\gl_core_4_4.c" />
+    <ClCompile Include="src\Vendor\OBJMesh\OBJMesh.cpp" />
     <ClCompile Include="src\Vendor\stb_image\stb_image.cpp" />
     <ClCompile Include="src\VertexArray.cpp" />
     <ClCompile Include="src\VertexBuffer.cpp" />
