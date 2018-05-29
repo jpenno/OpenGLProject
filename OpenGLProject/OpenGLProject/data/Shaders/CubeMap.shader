@@ -6,11 +6,12 @@ layout(location = 0) in vec3 position;
 out vec3 TexCoords;
 
 uniform mat4 u_Pos;
+//uniform mat4 test;
 
 void main()
 {
 	gl_Position = u_Pos * vec4(position, 1.0);
-
+	//mat4 tmp = test;
 	TexCoords = position;
 };
 
