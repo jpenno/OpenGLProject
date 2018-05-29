@@ -29,7 +29,7 @@ uniform vec3 cameraPosition;
 
 vec3 Ka; // ambient material colour
 vec3 Kd; // diffuse material colour
-uniform vec3 Ks; // specular material colour
+vec3 Ks; // specular material colour
 uniform float specularPower; // material specular power
 
 // we need this matrix to transform the normal
@@ -42,6 +42,7 @@ uniform vec3 LightDirection;
 
 uniform sampler2D diffuseTexture;
 uniform sampler2D normalTexture;
+uniform sampler2D specularTexture;
 
 out vec4 FragColour;
 
@@ -49,6 +50,9 @@ void main() {
 	vec3 texColor = texture(diffuseTexture, vTexCoord).xyz;
 	Kd = texColor;
 	Ka = texColor;
+
+	vec3 specColor = texture(specularTexture, vTexCoord).xyz;
+	Ks = specColor;
 
 	vec3 normalT = texture(normalTexture, vTexCoord).xyz;
 	vec3 vNormal = NormalMatrix * normalT.xyz;

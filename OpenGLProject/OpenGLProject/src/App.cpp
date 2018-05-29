@@ -99,11 +99,10 @@ bool App::Startup() {
 
 	// set the light
 	m_light.diffuse = { 1, 1, 0 };
-	m_light.specular = { 1, 1, 1 };
-	//m_light.specular = { 0, 0, 1 };
+    m_light.specular = { 1, 1, 1 };
 
-	//m_ambientLight = { 0.25f, 0.25f, 0.25f };
-	m_ambientLight = { 1, 1, 1 };
+	m_ambientLight = { 0.25f, 0.25f, 0.25f };
+	//m_ambientLight = { 1, 1, 1 };
 
 	return true;
 }
