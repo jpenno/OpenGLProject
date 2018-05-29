@@ -23,7 +23,7 @@
 
 #include "VertexArray.h"
 
-
+//tsuemea
 using glm::vec3;
 using glm::vec4;
 using glm::mat4;
@@ -96,6 +96,14 @@ bool App::Startup() {
 	m_camera.setProjectionView(glm::radians(45.0f), 16.0f / 9.0f, 0.1f, 1000.0f);
 	m_camera.Lookat(vec3(0, 0, 0));
 	m_gameOver = false;
+
+	// set the light
+	m_light.diffuse = { 1, 1, 0 };
+    m_light.specular = { 1, 1, 1 };
+
+	m_ambientLight = { 0.25f, 0.25f, 0.25f };
+	//m_ambientLight = { 1, 1, 1 };
+
 	return true;
 }
 
@@ -116,18 +124,21 @@ void App::run(const char* title, int width, int height )
 			GLCall(glEnable(GL_BLEND));
 			GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
-			Shader objShader("data/shaders/objShader.shader");
 
 			aie::OBJMesh mesh;
 			mesh.load("data/soulspear/soulspear.obj", true, true);
+
 
 			glm::mat4 m_bunnyTransform;
 			m_bunnyTransform = {
 				0.5f,0,0,0,
 				0,0.5f,0,0,
 				0,0,0.5f,0,
-				0,0,0,1
+				0,1,0,1
 			};
+
+			Shader objShader("data/shaders/Lighting.shader");
+			//Shader TestingShader("data/shaders/Testing.shader");
 
 			//Mesh mesh(glm::vec3(0.0f, 0.0f, 0.0f), m_camera.GetProjectionView());
 
@@ -142,16 +153,20 @@ void App::run(const char* title, int width, int height )
 
 			SkyBox skyBox(fielPaths, m_camera.GetProjectionView(), m_camera.GetViewMat());
 
-			Cube Testcube (fielPaths, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), m_camera.GetProjectionView());
-			Cube Testcube2(fielPaths, glm::vec4(2.0f, 0.0f, 0.0f, 1.0f), m_camera.GetProjectionView(), 2);
-			Cube Testcube4(fielPaths, glm::vec4(6.0f, 0.0f, 0.0f, 1.0f), m_camera.GetProjectionView(), 4);
+			//Cube Testcube (fielPaths, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), m_camera.GetProjectionView());
+			//Cube Testcube2(fielPaths, glm::vec4(2.0f, 0.0f, 0.0f, 1.0f), m_camera.GetProjectionView());
+			//Cube Testcube4(fielPaths, glm::vec4(6.0f, 0.0f, 0.0f, 1.0f), m_camera.GetProjectionView());
 
-			while (!m_gameOver) 
+			while (!m_gameOver)
 			{
 				// update delta time
 				currTime = (float)glfwGetTime();
 				deltaTime = currTime - prevTime;
 				prevTime = currTime;
+				// rotate light
+				m_light.direction = glm::normalize(vec3(glm::cos(currTime * 2),
+					glm::sin(currTime * 2), 0));
+				//m_light.direction = glm::normalize(vec3(0, 1, 0));
 
 				// clear input
 				Input::getInstance()->clearStatus();
@@ -164,15 +179,36 @@ void App::run(const char* title, int width, int height )
 				// clear the screen
 				clearScreen();
 
-				Testcube.Draw(m_camera.GetProjectionView());
-				Testcube2.Draw(m_camera.GetProjectionView());
-				Testcube4.Draw(m_camera.GetProjectionView());
+				//Testcube.Draw(m_camera.GetProjectionView());
+				//Testcube2.Draw(m_camera.GetProjectionView());
+				//Testcube4.Draw(m_camera.GetProjectionView());
+
+
+				auto pvm = m_camera.GetProjectionView() * m_bunnyTransform;
+
+				//TestingShader.Bind();
+				//TestingShader.SetuniformMat4f("ProjectionViewModel", pvm);
+				//TestingShader.SetuniformMat4f("Test", pvm);
 
 				// draw obj
 				objShader.Bind();
 				// bind transform
-				auto pvm = m_camera.GetProjectionView() * m_bunnyTransform;
 				objShader.SetuniformMat4f("ProjectionViewModel", pvm);
+
+				objShader.SetuniformMat4f("ModelMatrix", m_bunnyTransform);
+
+				objShader.SetuniformMat3f("NormalMatrix",
+					glm::inverseTranspose(glm::mat3(m_bunnyTransform)));
+
+
+				// bind light
+				objShader.SetUniform3f("Ia", m_ambientLight);
+				objShader.SetUniform3f("Id", m_light.diffuse);
+				objShader.SetUniform3f("Is", m_light.specular);
+				objShader.SetUniform3f("LightDirection", m_light.direction);
+				objShader.SetUniform3f("cameraPosition", m_camera.GetPos());
+				objShader.SetUniform1f("specularPower", 125.0f);
+
 				mesh.draw();
 
 				skyBox.Draw(m_camera.GetViewMat());
@@ -219,7 +255,7 @@ void App::draw()
 	glfwSwapBuffers(window);
 }
 
-void App::shutdown() 
+void App::shutdown()
 {
 	Gizmos::destroy();
 

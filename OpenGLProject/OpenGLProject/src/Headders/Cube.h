@@ -27,9 +27,6 @@ private:
 	Shader*             m_shader = nullptr;
 	Texture*           m_texture = nullptr;
 
-
-
-
 	static float verts[24];
 	static unsigned char indices[36];
 

@@ -34,7 +34,6 @@ unsigned char Cube::indices[36]{
 	5,  1,  0,  	4,  5,  0	// Bottom face
 };
 
-
 Cube::Cube(const std::vector<std::string>& fielPaths, const glm::vec3& a_pos, const glm::mat4& a_projection, const float scale /*= 1*/)
 	:m_projection(a_projection)
 {
@@ -92,6 +91,8 @@ void Cube::Draw(const glm::mat4& projMat)
 	m_texture->Bind();
 	glm::mat4 pos = projMat * m_matPos;
 	m_shader->SetuniformMat4f("u_Pos", pos);
+
+	//m_shader->SetuniformMat4f("test", pos);
 
 	GLCall(glDrawElements(GL_TRIANGLES, m_ib->GetCount(), GL_UNSIGNED_BYTE, nullptr));
 }
