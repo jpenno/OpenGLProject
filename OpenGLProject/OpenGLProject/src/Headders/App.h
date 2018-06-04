@@ -33,11 +33,16 @@ private:
 
 
 	struct Light {
+		glm::vec3 pos;
 		glm::vec3 direction;
 		glm::vec3 diffuse;
 		glm::vec3 specular;
 	};
 	Light m_light;
 	glm::vec3 m_ambientLight;
+	Light m_pointLight;
+
+
+
 };
 

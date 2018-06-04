@@ -86,6 +86,17 @@ void Texture::Bind(unsigned int slot /*= 0*/) const
 void Texture::Unbind() const
 {
 	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
+	switch (m_textureType)
+	{
+	case Texture::Type::TEXTURE2D:
+		GLCall(glBindTexture(GL_TEXTURE_2D, 0));
+		break;
+	case Texture::Type::TEXUTRE_CUBEMAP:
+		GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, 0));
+		break;
+	default:
+		break;
+	}
 }
 
 // AIE load texture function

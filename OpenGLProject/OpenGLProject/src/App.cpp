@@ -97,12 +97,19 @@ bool App::Startup() {
 	m_camera.Lookat(vec3(0, 0, 0));
 	m_gameOver = false;
 
-	// set the light
+	// set Dir light
 	m_light.diffuse = { 1, 1, 0 };
     m_light.specular = { 1, 1, 1 };
 
 	m_ambientLight = { 0.25f, 0.25f, 0.25f };
 	//m_ambientLight = { 1, 1, 1 };
+
+	// set point light
+	m_pointLight.pos = { 0, 2, 3 };
+	m_pointLight.diffuse = { 0, 1, 0 };
+	m_pointLight.specular = { 1, 1, 1 };
+
+	m_ambientLight = { 0.25f, 0.25f, 0.25f };
 
 	return true;
 }
@@ -110,7 +117,7 @@ bool App::Startup() {
 void App::run(const char* title, int width, int height )
 {
 	if (createWindow(title,  width,  height) &&
-		Startup()) 
+		Startup())
 	{
 		// variables for timing
 		float prevTime = (float)glfwGetTime();
@@ -137,7 +144,16 @@ void App::run(const char* title, int width, int height )
 				0,1,0,1
 			};
 
-			Shader objShader("data/shaders/Lighting.shader");
+			glm::mat4 testPos;
+			testPos = {
+				0.5f,0,0,0,
+				0,0.5f,0,0,
+				0,0,0.5f,0,
+				5,1,0,1
+			};
+
+
+			Shader objShader("data/shaders/mutipleLights.shader");
 			//Shader TestingShader("data/shaders/Testing.shader");
 
 			//Mesh mesh(glm::vec3(0.0f, 0.0f, 0.0f), m_camera.GetProjectionView());
@@ -151,10 +167,10 @@ void App::run(const char* title, int width, int height )
 			fielPaths.emplace_back("data/Textures/lilacisles_rt.png");
 			fielPaths.emplace_back("data/Textures/lilacisles_lf.png");
 
-			//SkyBox skyBox(fielPaths, m_camera.GetProjectionView(), m_camera.GetViewMat());
+			SkyBox skyBox(fielPaths, m_camera.GetProjectionView(), m_camera.GetViewMat());
 
-			//Cube Testcube (fielPaths, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), m_camera.GetProjectionView());
-			//Cube Testcube2(fielPaths, glm::vec4(2.0f, 0.0f, 0.0f, 1.0f), m_camera.GetProjectionView());
+			Cube Testcube (fielPaths, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), m_camera.GetProjectionView());
+			Cube Testcube2(fielPaths, glm::vec4(2.0f, 0.0f, 0.0f, 1.0f), m_camera.GetProjectionView());
 			//Cube Testcube4(fielPaths, glm::vec4(6.0f, 0.0f, 0.0f, 1.0f), m_camera.GetProjectionView());
 
 			while (!m_gameOver)
@@ -190,6 +206,9 @@ void App::run(const char* title, int width, int height )
 				//TestingShader.SetuniformMat4f("ProjectionViewModel", pvm);
 				//TestingShader.SetuniformMat4f("Test", pvm);
 
+				//Testcube2.Draw(m_camera.GetProjectionView());
+
+
 				// draw obj
 				objShader.Bind();
 				// bind transform
@@ -199,19 +218,48 @@ void App::run(const char* title, int width, int height )
 
 				objShader.SetuniformMat3f("NormalMatrix",
 					glm::inverseTranspose(glm::mat3(m_bunnyTransform)));
-
-
-				// bind light
-				objShader.SetUniform3f("Ia", m_ambientLight);
-				objShader.SetUniform3f("Id", m_light.diffuse);
-				objShader.SetUniform3f("Is", m_light.specular);
-				objShader.SetUniform3f("LightDirection", m_light.direction);
+		
 				objShader.SetUniform3f("cameraPosition", m_camera.GetPos());
 				objShader.SetUniform1f("specularPower", 125.0f);
 
+
+				// bind light
+				// dir light
+				objShader.SetUniform3f("dirLight.ambient", m_ambientLight);
+				objShader.SetUniform3f("dirLight.diffuse", m_light.diffuse);
+				objShader.SetUniform3f("dirLight.specular", m_light.specular);
+				objShader.SetUniform3f("dirLight.direction", m_light.direction);
+
+				// point light
+				objShader.SetUniform3f("pointLight.ambient", glm::vec3(0, 0, 0.25));
+				objShader.SetUniform3f("pointLight.diffuse", m_pointLight.diffuse);
+				objShader.SetUniform3f("pointLight.specular", m_pointLight.specular);
+				objShader.SetUniform3f("pointLight.position", m_pointLight.pos);
+
+				objShader.SetUniform1f("pointLight.constant", 1.0f);
+				objShader.SetUniform1f("pointLight.linear", 0.09f);
+				objShader.SetUniform1f("pointLight.quadratic", 0.032f);
+
 				mesh.draw();
 
+				// draw a second obj
+				pvm = m_camera.GetProjectionView() * testPos;
+				objShader.SetuniformMat4f("ProjectionViewModel", pvm);
+				objShader.SetuniformMat4f("ModelMatrix", testPos);
+
+				objShader.SetuniformMat3f("NormalMatrix",
+					glm::inverseTranspose(glm::mat3(testPos)));
+
+				mesh.draw();
+
+
+				//Testcube.Draw(m_camera.GetProjectionView());
+
+
+				//objShader.Unbidn();
+
 				//skyBox.Draw(m_camera.GetViewMat());
+
 
 				draw();
 
@@ -230,6 +278,11 @@ void App::update(float deltaTime)
 		quit();
 
 	m_camera.update(deltaTime);
+
+	// move the point light 
+	//m_pointLight.pos.y += 1 * deltaTime;
+	//if (m_pointLight.pos.y > 15)
+	//	m_pointLight.pos.y = 0;
 }
 
 void App::draw() 
@@ -250,6 +303,9 @@ void App::draw()
 			vec3(-10, 0, -10 + i),
 			i == 10 ? white : black);
 	}
+
+	Gizmos::addSphere(m_pointLight.pos, 0.25f, 10, 10, glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
+
 
 	Gizmos::draw(m_camera.GetProjectionView());
 	glfwSwapBuffers(window);
