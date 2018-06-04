@@ -151,7 +151,7 @@ void App::run(const char* title, int width, int height )
 			fielPaths.emplace_back("data/Textures/lilacisles_rt.png");
 			fielPaths.emplace_back("data/Textures/lilacisles_lf.png");
 
-			SkyBox skyBox(fielPaths, m_camera.GetProjectionView(), m_camera.GetViewMat());
+			//SkyBox skyBox(fielPaths, m_camera.GetProjectionView(), m_camera.GetViewMat());
 
 			//Cube Testcube (fielPaths, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), m_camera.GetProjectionView());
 			//Cube Testcube2(fielPaths, glm::vec4(2.0f, 0.0f, 0.0f, 1.0f), m_camera.GetProjectionView());
@@ -211,7 +211,7 @@ void App::run(const char* title, int width, int height )
 
 				mesh.draw();
 
-				skyBox.Draw(m_camera.GetViewMat());
+				//skyBox.Draw(m_camera.GetViewMat());
 
 				draw();
 
