@@ -86,13 +86,13 @@ Cube::~Cube()
 
 void Cube::Draw(const glm::mat4& projMat)
 {
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 	m_va->Bind();
 	m_shader->Bind();
 	m_texture->Bind();
 	glm::mat4 pos = projMat * m_matPos;
 	m_shader->SetuniformMat4f("u_Pos", pos);
-
-	//m_shader->SetuniformMat4f("test", pos);
 
 	GLCall(glDrawElements(GL_TRIANGLES, m_ib->GetCount(), GL_UNSIGNED_BYTE, nullptr));
 }

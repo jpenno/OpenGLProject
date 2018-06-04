@@ -6,6 +6,7 @@ layout(location = 2) in vec2 TexCoord;
 
 out vec2 vTexCoord;
 out vec4 vPosition;
+out vec4 fragPos;
 
 uniform mat4 ProjectionViewModel;
 
@@ -15,6 +16,7 @@ void main() {
 	vPosition = ModelMatrix * Position;
 
 	vTexCoord = TexCoord;
+	fragPos = ProjectionViewModel * Position;
 	gl_Position = ProjectionViewModel * Position;
 }
 
@@ -23,6 +25,7 @@ void main() {
 
 in vec2 vTexCoord;
 in vec4 vPosition;
+in vec4 fragPos;
 
 uniform vec3 cameraPosition;
 
@@ -55,10 +58,7 @@ struct PointLight {
 	vec3 diffuse;
 	vec3 specular;
 };
-//#define NR_POINT_LIGHTS 4;  
-//uniform PointLight pointLights[NR_POINT_LIGHTS];
 uniform PointLight pointLight;
-
 
 out vec4 FragColor;
 
@@ -75,16 +75,9 @@ void main() {
 
 	// phase 1: Directional lighting
 	vec3 result = CalcDirLight(dirLight, norm, viewDir);
-	// phase 2: Point lights
-	//for (int i = 0; i < NR_POINT_LIGHTS; i++)
-	//	result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);
 
 	// point light
-	result += CalcPointLight(pointLight, norm, vPosition.xyz, viewDir);
-
-
-	// phase 3: Spot light
-	//result += CalcSpotLight(spotLight, norm, FragPos, viewDir);    
+	result += CalcPointLight(pointLight, norm, fragPos.xyz, viewDir);
 
 	FragColor = vec4(result, 1.0);
 }
@@ -92,11 +85,14 @@ void main() {
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 {
 	vec3 lightDir = normalize(-light.direction);
+
 	// diffuse shading
 	float diff = max(dot(normal, lightDir), 0.0);
+
 	// specular shading
 	vec3 reflectDir = reflect(-lightDir, normal);
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0), specularPower);
+
 	// combine results
 	vec3 ambient = light.ambient  * vec3(texture(diffuseTexture, vTexCoord));
 	vec3 diffuse = light.diffuse  * diff * vec3(texture(diffuseTexture, vTexCoord));
