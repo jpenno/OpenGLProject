@@ -97,12 +97,19 @@ bool App::Startup() {
 	m_camera.Lookat(vec3(0, 0, 0));
 	m_gameOver = false;
 
-	// set the light
+	// set Dir light
 	m_light.diffuse = { 1, 1, 0 };
     m_light.specular = { 1, 1, 1 };
 
 	m_ambientLight = { 0.25f, 0.25f, 0.25f };
 	//m_ambientLight = { 1, 1, 1 };
+
+	// set point light
+	m_pointLight.pos = { 0, 0, 0.5f };
+	m_pointLight.diffuse = { 0, 1, 0 };
+	m_pointLight.specular = { 1, 1, 1 };
+
+	m_ambientLight = { 0.25f, 0.25f, 0.25f };
 
 	return true;
 }
@@ -110,7 +117,7 @@ bool App::Startup() {
 void App::run(const char* title, int width, int height )
 {
 	if (createWindow(title,  width,  height) &&
-		Startup()) 
+		Startup())
 	{
 		// variables for timing
 		float prevTime = (float)glfwGetTime();
@@ -137,7 +144,7 @@ void App::run(const char* title, int width, int height )
 				0,1,0,1
 			};
 
-			Shader objShader("data/shaders/Lighting.shader");
+			Shader objShader("data/shaders/mutipleLights.shader");
 			//Shader TestingShader("data/shaders/Testing.shader");
 
 			//Mesh mesh(glm::vec3(0.0f, 0.0f, 0.0f), m_camera.GetProjectionView());
@@ -202,10 +209,23 @@ void App::run(const char* title, int width, int height )
 
 
 				// bind light
-				objShader.SetUniform3f("Ia", m_ambientLight);
-				objShader.SetUniform3f("Id", m_light.diffuse);
-				objShader.SetUniform3f("Is", m_light.specular);
-				objShader.SetUniform3f("LightDirection", m_light.direction);
+				// dir light
+				objShader.SetUniform3f("dirLight.ambient", m_ambientLight);
+				objShader.SetUniform3f("dirLight.diffuse", m_light.diffuse);
+				objShader.SetUniform3f("dirLight.specular", m_light.specular);
+				objShader.SetUniform3f("dirLight.direction", m_light.direction);
+
+				// point light
+				objShader.SetUniform3f("pointLight.ambient", glm::vec3(0, 0, 0.25));
+				objShader.SetUniform3f("pointLight.diffuse", m_pointLight.diffuse);
+				objShader.SetUniform3f("pointLight.specular", m_pointLight.specular);
+				objShader.SetUniform3f("pointLight.position", m_pointLight.pos);
+
+				objShader.SetUniform1f("pointLight.constant", 1.0f);
+				objShader.SetUniform1f("pointLight.linear", 0.09f);
+				objShader.SetUniform1f("pointLight.quadratic", 0.032f);
+
+
 				objShader.SetUniform3f("cameraPosition", m_camera.GetPos());
 				objShader.SetUniform1f("specularPower", 125.0f);
 
@@ -230,6 +250,11 @@ void App::update(float deltaTime)
 		quit();
 
 	m_camera.update(deltaTime);
+
+	// move the point light 
+	m_pointLight.pos.y += 1 * deltaTime;
+	if (m_pointLight.pos.y > 15)
+		m_pointLight.pos.y = 0;
 }
 
 void App::draw() 
