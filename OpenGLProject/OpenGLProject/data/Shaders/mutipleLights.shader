@@ -2,11 +2,13 @@
 #version 410
 
 layout(location = 0) in vec4 Position;
+layout(location = 1) in vec4 normal;
 layout(location = 2) in vec2 TexCoord;
 
 out vec2 vTexCoord;
 out vec4 vPosition;
 out vec4 fragPos;
+out vec4 fnormal;
 
 uniform mat4 ProjectionViewModel;
 
@@ -14,7 +16,7 @@ uniform mat4 ModelMatrix;
 
 void main() {
 	vPosition = ModelMatrix * Position;
-
+	fnormal = normal;
 	vTexCoord = TexCoord;
 	fragPos = ProjectionViewModel * Position;
 	gl_Position = ProjectionViewModel * Position;
@@ -26,7 +28,7 @@ void main() {
 in vec2 vTexCoord;
 in vec4 vPosition;
 in vec4 fragPos;
-
+in vec4 fnormal;
 uniform vec3 cameraPosition;
 
 // we need this matrix to transform the normal
@@ -67,7 +69,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
 void main() {
 	vec3 normalT = texture(normalTexture, vTexCoord).xyz;
-	vec3 vNormal = NormalMatrix * normalT.xyz;
+	vec3 vNormal = NormalMatrix * fnormal.xyz;
 
 	// properties
 	vec3 norm = normalize(vNormal);
@@ -77,9 +79,13 @@ void main() {
 	vec3 result = CalcDirLight(dirLight, norm, viewDir);
 
 	// point light
-	result += CalcPointLight(pointLight, norm, fragPos.xyz, viewDir);
+	result += CalcPointLight(pointLight, norm, vPosition.xyz, viewDir);
 
 	FragColor = vec4(result, 1.0);
+
+	//FragColor = texture(diffuseTexture, vTexCoord) + vec4(0.0, 0.5, 0.0, 1.0);
+	//FragColor = texture(diffuseTexture, vTexCoord) ;
+
 }
 
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)

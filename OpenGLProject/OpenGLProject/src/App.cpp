@@ -105,7 +105,7 @@ bool App::Startup() {
 	//m_ambientLight = { 1, 1, 1 };
 
 	// set point light
-	m_pointLight.pos = { 0, 2, 3 };
+	m_pointLight.pos = { 0, 3, 2 };
 	m_pointLight.diffuse = { 0, 1, 0 };
 	m_pointLight.specular = { 1, 1, 1 };
 
@@ -131,46 +131,52 @@ void App::run(const char* title, int width, int height )
 			GLCall(glEnable(GL_BLEND));
 			GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
+			Shader objShader("data/shaders/mutipleLights.shader");
 
-			aie::OBJMesh mesh;
+			aie::OBJMesh mesh; 
+			aie::OBJMesh mesh2;
+
 			mesh.load("data/soulspear/soulspear.obj", true, true);
+			mesh2.load("data/nanosuit/nanosuit.obj", true, true);
 
+
+			float scale = 0.5f;
 
 			glm::mat4 m_bunnyTransform;
 			m_bunnyTransform = {
-				0.5f,0,0,0,
-				0,0.5f,0,0,
-				0,0,0.5f,0,
+				scale,0,0,0,
+				0,scale,0,0,
+				0,0,scale,0,
 				0,1,0,1
 			};
 
+			scale = 0.5f;
 			glm::mat4 testPos;
 			testPos = {
-				0.5f,0,0,0,
-				0,0.5f,0,0,
-				0,0,0.5f,0,
+				scale,0,0,0,
+				0,scale,0,0,
+				0,0,scale,0,
 				5,1,0,1
 			};
 
 
-			Shader objShader("data/shaders/mutipleLights.shader");
 			//Shader TestingShader("data/shaders/Testing.shader");
 
 			//Mesh mesh(glm::vec3(0.0f, 0.0f, 0.0f), m_camera.GetProjectionView());
 
 
-			std::vector<std::string> fielPaths;
-			fielPaths.emplace_back("data/Textures/lilacisles_ft.png");
-			fielPaths.emplace_back("data/Textures/lilacisles_bk.png");
-			fielPaths.emplace_back("data/Textures/lilacisles_up.png");
-			fielPaths.emplace_back("data/Textures/lilacisles_dn.png");
-			fielPaths.emplace_back("data/Textures/lilacisles_rt.png");
-			fielPaths.emplace_back("data/Textures/lilacisles_lf.png");
+			//std::vector<std::string> fielPaths;
+			//fielPaths.emplace_back("data/Textures/lilacisles_ft.png");
+			//fielPaths.emplace_back("data/Textures/lilacisles_bk.png");
+			//fielPaths.emplace_back("data/Textures/lilacisles_up.png");
+			//fielPaths.emplace_back("data/Textures/lilacisles_dn.png");
+			//fielPaths.emplace_back("data/Textures/lilacisles_rt.png");
+			//fielPaths.emplace_back("data/Textures/lilacisles_lf.png");
 
-			SkyBox skyBox(fielPaths, m_camera.GetProjectionView(), m_camera.GetViewMat());
+			//SkyBox skyBox(fielPaths, m_camera.GetProjectionView(), m_camera.GetViewMat());
 
-			Cube Testcube (fielPaths, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), m_camera.GetProjectionView());
-			Cube Testcube2(fielPaths, glm::vec4(2.0f, 0.0f, 0.0f, 1.0f), m_camera.GetProjectionView());
+			//Cube Testcube (fielPaths, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), m_camera.GetProjectionView());
+			//Cube Testcube2(fielPaths, glm::vec4(2.0f, 0.0f, 0.0f, 1.0f), m_camera.GetProjectionView());
 			//Cube Testcube4(fielPaths, glm::vec4(6.0f, 0.0f, 0.0f, 1.0f), m_camera.GetProjectionView());
 
 			while (!m_gameOver)
@@ -200,7 +206,7 @@ void App::run(const char* title, int width, int height )
 				//Testcube4.Draw(m_camera.GetProjectionView());
 
 
-				auto pvm = m_camera.GetProjectionView() * m_bunnyTransform;
+				auto pvm = m_camera.GetProjectionView() * testPos;
 
 				//TestingShader.Bind();
 				//TestingShader.SetuniformMat4f("ProjectionViewModel", pvm);
@@ -213,11 +219,11 @@ void App::run(const char* title, int width, int height )
 				objShader.Bind();
 				// bind transform
 				objShader.SetuniformMat4f("ProjectionViewModel", pvm);
-
-				objShader.SetuniformMat4f("ModelMatrix", m_bunnyTransform);
-
+				
+				objShader.SetuniformMat4f("ModelMatrix", testPos);
+				
 				objShader.SetuniformMat3f("NormalMatrix",
-					glm::inverseTranspose(glm::mat3(m_bunnyTransform)));
+					glm::inverseTranspose(glm::mat3(testPos)));
 		
 				objShader.SetUniform3f("cameraPosition", m_camera.GetPos());
 				objShader.SetUniform1f("specularPower", 125.0f);
@@ -240,15 +246,15 @@ void App::run(const char* title, int width, int height )
 				objShader.SetUniform1f("pointLight.linear", 0.09f);
 				objShader.SetUniform1f("pointLight.quadratic", 0.032f);
 
-				mesh.draw();
+				mesh2.draw();
 
 				// draw a second obj
-				pvm = m_camera.GetProjectionView() * testPos;
+				pvm = m_camera.GetProjectionView() * m_bunnyTransform;
 				objShader.SetuniformMat4f("ProjectionViewModel", pvm);
-				objShader.SetuniformMat4f("ModelMatrix", testPos);
+				objShader.SetuniformMat4f("ModelMatrix", m_bunnyTransform);
 
 				objShader.SetuniformMat3f("NormalMatrix",
-					glm::inverseTranspose(glm::mat3(testPos)));
+					glm::inverseTranspose(glm::mat3(m_bunnyTransform)));
 
 				mesh.draw();
 
