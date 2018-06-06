@@ -1,8 +1,16 @@
 #pragma once
 #include <glm/mat4x4.hpp>
 #include "Camera.h"
+#include "Lights.h"
+#include <string>
 
 struct GLFWwindow;
+namespace aie {
+	class OBJMesh;
+}
+class Shader;
+class Cube;
+class SkyBox;
 
 class App
 {
@@ -25,24 +33,31 @@ protected:
 private:
 	bool createWindow(const char* title, int width, int height);
 
+	// shaders
+	Shader * m_lightingShader = nullptr;
+
+	// obj
+	glm::mat4 soulspherPos;
+	aie::OBJMesh * m_soulsper = nullptr;
+	glm::mat4 nanosuitPos;
+	aie::OBJMesh * m_nanosuitMesh = nullptr;
+
+
+
+	Cube * m_cube = nullptr;
+
+	SkyBox * m_skyBox = nullptr;
+
+	// lighting 
+	DirLight m_dirLight;
+	PointLight m_pointLight;
+
+
+	// 
 	GLFWwindow * window;
 	glm::mat4 view;
 	glm::mat4 projection;
 
 	Camera m_camera;
-
-
-	struct Light {
-		glm::vec3 pos;
-		glm::vec3 direction;
-		glm::vec3 diffuse;
-		glm::vec3 specular;
-	};
-	Light m_light;
-	glm::vec3 m_ambientLight;
-	Light m_pointLight;
-
-
-
 };
 

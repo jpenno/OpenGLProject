@@ -10,7 +10,7 @@
 #include "Texture.h"
 
 #include "Renderer.h"
-
+// set cube static verts
 float Cube::verts[24]{
 	// front
 	-0.5f, -0.5f,  0.5f, // 0
@@ -25,6 +25,7 @@ float Cube::verts[24]{
 	-0.5f,  0.5f, -0.5f, // 7
 };
 
+// set cube static indices
 unsigned char Cube::indices[36]{
 	0,  1,  2,	    0,  2,  3,	// front face
 	1,  5,  6,	    1,  6,  2,	// Right face
@@ -47,18 +48,24 @@ Cube::Cube(const std::vector<std::string>& fielPaths, const glm::vec3& a_pos, co
 	m_matPos[1][1] = scale;
 	m_matPos[2][2] = scale;
 
+	// make a vertex array
 	m_va = new VertexArray();
+
+	// set the vertex buffer
 	m_vb = new VertexBuffer(verts,  sizeof(verts));
 
+	// set the shader
 	m_shader = new Shader("data/shaders/CubeMap.shader");
-	m_shader->Bind();
 
+	// set the vertex buffer layout
 	m_layout = new VertexBufferLayout();
 	m_layout->Push<float>(3);
 	m_va->AddBuffer(*m_vb, *m_layout);
 
+	// set the index buffer
 	m_ib = new IndexBuffer(indices, 36);
 
+	// set the texture
 	m_texture = new Texture();
 	m_texture->LoadTextureCubeMap(fielPaths);
 }
@@ -86,13 +93,19 @@ Cube::~Cube()
 
 void Cube::Draw(const glm::mat4& projMat)
 {
-	glBindTexture(GL_TEXTURE_2D, 0);
-
+	// bind the vertex array
 	m_va->Bind();
-	m_shader->Bind();
-	m_texture->Bind();
-	glm::mat4 pos = projMat * m_matPos;
-	m_shader->SetuniformMat4f("u_Pos", pos);
 
+	// bind the shader
+	m_shader->Bind();
+
+	// bind the texture
+	m_texture->Bind();
+
+	// set the projection view matrix
+	glm::mat4 pvm = projMat * m_matPos;
+	m_shader->SetuniformMat4f("u_Pos", pvm);
+
+	// draw
 	GLCall(glDrawElements(GL_TRIANGLES, m_ib->GetCount(), GL_UNSIGNED_BYTE, nullptr));
 }

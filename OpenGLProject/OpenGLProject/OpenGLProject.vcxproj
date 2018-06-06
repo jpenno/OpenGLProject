@@ -144,6 +144,7 @@
     <ClInclude Include="src\Headders\Gizmos.h" />
     <ClInclude Include="src\Headders\IndexBuffer.h" />
     <ClInclude Include="src\Headders\Input.h" />
+    <ClInclude Include="src\Headders\Lights.h" />
     <ClInclude Include="src\Headders\Renderer.h" />
     <ClInclude Include="src\Headders\Shader.h" />
     <ClInclude Include="src\Headders\SkyBox.h" />

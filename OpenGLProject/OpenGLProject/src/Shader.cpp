@@ -6,12 +6,12 @@
 
 #include "Renderer.h"
 
-
-
 Shader::Shader(const std::string& fielPath) :
 	m_fielPath(fielPath), m_RendererID(0)
 {
+	// get the vertex and frag shaders in to c++ strings
 	ShaderProgramSource source = PassShader(fielPath);
+	// create the shader
 	m_RendererID = CreateShader(source.VertexSource, source.FragmentSource);
 }
 
@@ -75,6 +75,7 @@ int Shader::GetUniformLocation(const std::string& name)
 
 ShaderProgramSource Shader::PassShader(const std::string& filepath)
 {
+	// open the file the shader is in
 	std::ifstream stream(filepath);
 
 	enum class ShaderType
@@ -84,38 +85,53 @@ ShaderProgramSource Shader::PassShader(const std::string& filepath)
 
 	std::string line;
 	std::stringstream ss[2];
+
 	ShaderType type = ShaderType::NONE;
+
+	// read the file the vert and frag shader are in
 	while (getline(stream, line))
 	{
+		// check the line for shader
 		if (line.find("#shader") != std::string::npos)
 		{
+			// check if it is a vertex shader
 			if (line.find("vertex") != std::string::npos)
-				type = ShaderType::VERTEX;
+				type = ShaderType::VERTEX; // set shader type to vertex
 
+			// check if it is a fragment shader
 			else if (line.find("fragment") != std::string::npos)
-				type = ShaderType::FRAGMENT;
+				type = ShaderType::FRAGMENT; // set shader type to fragment
 		}
 		else
 		{
+			// read shaders in to the string stream
 			ss[(int)type] << line << '\n';
 		}
 	}
-
+	// return the shaders as strings
 	return { ss[0].str(), ss[1].str() };
 }
 
 
 unsigned int Shader::CreateShader(const std::string &vertexShader, const std::string &fragmentShader)
 {
+	// make a program for the vertex and fragment shaders
 	unsigned int program = glCreateProgram();
+	// complie the vertex shader
 	unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
+	// compile the fragment shader
 	unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
 
+	// attach vertex shader to the program
 	GLCall(glAttachShader(program, vs));
+	// attach fragment shadert to the program
 	GLCall(glAttachShader(program, fs));
+	// link the program
 	GLCall(glLinkProgram(program));
+	// validate the program
 	GLCall(glValidateProgram(program));
 
+	// delete the vertex and fragment shaders
 	GLCall(glDeleteShader(vs));
 	GLCall(glDeleteShader(fs));
 
@@ -124,28 +140,31 @@ unsigned int Shader::CreateShader(const std::string &vertexShader, const std::st
 
 unsigned int Shader::CompileShader(unsigned int type, const std::string &source)
 {
+	// create a shader
 	unsigned int id = glCreateShader(type);
+	// compile the shader
 	const char* src = source.c_str();
 	GLCall(glShaderSource(id, 1, &src, nullptr));
 	GLCall(glCompileShader(id));
 
 	int result;
+	// check if the shader compiled
 	GLCall(glGetShaderiv(id, GL_COMPILE_STATUS, &result));
 	if (result == GL_FALSE)
 	{
 		int length;
+		// get the error from the shader not comiling
 		GLCall(glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length));
 		char* message = (char*)alloca(length * sizeof(char));
 		glGetShaderInfoLog(id, length, &length, message);
 		std::cout << "Failed to compile " << (type == GL_VERTEX_SHADER ? "vertex " : "fragment ") << "shader" << std::endl;
+		// print the error message
 		std::cout << message << std::endl;
 
-		std::cout << "Shader Src" << std::endl;
-		std::cout << source << std::endl;
-
+		// delete the shader
 		GLCall(glDeleteShader(id));
 		return 0;
 	}
-
+	// return the compiled shader
 	return id;
 }

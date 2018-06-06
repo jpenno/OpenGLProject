@@ -41,6 +41,7 @@ void Camera::update(float deltaTime) {
 		m_position.y -= speed * deltaTime;
 	}
 	
+	// rotate the camera when the right mouse is preased
 	if (input->isMouseButtonDown(INPUT_MOUSE_BUTTON_RIGHT)) {
 		int mouseXPos, mouseYPos;
 		input->getMouseXY(&mouseXPos, &mouseYPos);
@@ -56,9 +57,9 @@ void Camera::update(float deltaTime) {
 
 		CalculateFront();
 	}
-
+	// calacate the view matrix
 	m_viewMatrix = glm::lookAt(m_position, m_position + m_cameraFront, m_cameraUp);
-
+	// get the mouse last position
 	input->getMouseXY(&m_lastMouseXPos, &m_lastMouseYPos);
 }
 
